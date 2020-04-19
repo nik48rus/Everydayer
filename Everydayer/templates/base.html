@@ -1,0 +1,22 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Мой сайт{% endblock %}</title>
+    <link href="{% static '/all.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c2e29beef4.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Open Sans';
+        }
+    </style>
+</head>
+<body>
+    {% block content %}
+    
+    {% endblock %}
+
+</body>
+</html>

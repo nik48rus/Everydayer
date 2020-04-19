@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Создание таска{% endblock %}
+
+{% block content %}
+<style>
+.title {
+    font-size: 2em;
+    padding: 20px 5px;
+}
+article {
+    margin-left: 5px;
+}
+input, textarea, button {
+    margin: 5px;
+    width: 200px;
+}
+input, textarea {
+    padding: 5px;
+    border: 1px solid gray;
+    border-radius: 3px;
+}
+button {
+    width: 212px;
+    padding: 10px 20px;
+    color: black;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 3px;
+    transition: .2s;
+}
+button:hover {
+    border: 1px solid #cb0f00;
+    background-color: #cb0f00;
+    color: white;
+    cursor: pointer;
+}
+</style>
+<div class="title">Создание таска</div>
+<form method="POST">
+    {% csrf_token %}
+    <article>Название:</article>
+    <input type="text" placeholder="Название" name="title"><br>
+    <article>Описание:</article>
+    <textarea cols="30" rows="10" name="description" placeholder="Описание"></textarea><br>
+    <article>Дата события</article>
+    <input type="datetime-local" name="date"><br>
+    <button type="submit">Создать таск</button>
+</form>
+{% endblock %}

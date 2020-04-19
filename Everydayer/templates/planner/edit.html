@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ task.task_title }}{% endblock %}
+
+{% block content %}
+
+<style>
+.title {
+    font-size: 2em;
+    padding: 20px 5px;
+}
+article {
+    margin-left: 5px;
+}
+input, textarea, button {
+    margin: 5px;
+    width: 200px;
+}
+input, textarea {
+    padding: 5px;
+    border: 1px solid gray;
+    border-radius: 3px;
+}
+button {
+    width: 212px;
+    padding: 10px 20px;
+    color: black;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 3px;
+    transition: .2s;
+}
+button:hover {
+    border: 1px solid #cb0f00;
+    background-color: #cb0f00;
+    color: white;
+    cursor: pointer;
+}
+</style>
+<div class="title">Изменение таска</div>
+<form action="{% url 'planner:edit' task.id %}" method="POST">
+    {% csrf_token %}
+    <article>Название:</article>
+    <input type="text" placeholder="Название" name="title" value="{{ task.task_title }}"><br>
+    <article>Описание:</article>
+    <textarea rows="10" name="description" placeholder="Описание">{{ task.task_description }}</textarea><br>
+    <article>Дата события</article>
+    <input type="datetime-local" name="date" value="{{ task.task_date|date:"Y-m-d\TH:i" }}"><br>
+    <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

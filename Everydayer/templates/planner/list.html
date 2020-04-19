@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Последние таски{% endblock %}
+
+{% block content %}
+    <style>
+    .week {
+        display: flex;
+        justify-content: space-between;
+    }
+    .day {
+        min-width: 100px;
+    }
+    .btn {
+        border: 0;
+        background-color: transparent;
+        transition: .2s;
+    }
+    .btn:hover {
+        opacity: .7;
+        cursor: pointer;
+    }
+    .month {
+        font-size: 2em;
+        display: inline;
+    }
+    .addTask {
+        border: 2px solid black;
+        border-radius: 100%;
+        height: 30px;
+        width: 30px;
+        display: inline;
+        line-height: 25px;
+        transform: translateY(-4px);
+        transition: .2s;
+    }
+    .addTask:hover {
+        background-color: #000;
+        color: white;
+    }
+    </style>
+    <div class="month">{{ month }}</div>
+    <button class="btn addTask" onclick="window.location.href='{% url 'planner:create' %}'"><i class="fas fa-plus"></i></button>
+    {% if latest_tasks %}
+
+
+        <div class="week">
+            {% for day in week %}
+                <div class="day">
+                    <h2>{{ day.day }}</h2>
+                    {% for i in latest_tasks %}
+                        {% if i.task_date.year == day.year %}
+                            {% if i.task_date.month == day.month %}
+                                {% if i.task_date.day == day.day %}
+                                    <p id="task{{ i.id }}">
+                                        {% if i.task_is_done %}
+                                            <input type="checkbox" id="chBoxId{{ i.id }}" onclick="changeCheckbox({{ i.id }});" checked/>
+                                        {% else %}
+                                            <input type="checkbox" id="chBoxId{{ i.id }}" onclick="changeCheckbox({{ i.id }});" />
+                                        {% endif %}
+                                        {{ i.task_title }}
+                                        <button class="btn" onclick="window.location.href='{% url 'planner:detail' i.id %}'"><i class="fas fa-edit"></i></button>
+                                        <button class="btn" onclick="deleteTask({{ i.id }})"><i class="fas fa-trash"></i></button>
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        Таски не найдены
+    {% endif %}
+
+    <script>
+    function changeCheckbox(id) {
+        var req = getXmlHttp();
+        var box = document.getElementById('chBoxId'+id);
+
+        req.onreadystatechange = function() {
+            if (req.readyState == 4) {
+                if(req.status == 200) {
+                    box.removeAttribute('disabled');
+                    // alert("Ответ сервера: "+req.responseText);
+                } else {
+                    if (box.getAttribute('checked') == null){
+                        box.setAttribute('checked', '');
+                    } else {
+                        box.removeAttribute('checked');
+                    }
+                }
+            }
+        };
+
+        req.open('GET', 'checkbox/'+id, true);
+        req.send(null);  // отослать запрос
+        box.setAttribute('disabled', '');
+    }
+
+    function getXmlHttp(){
+      var xmlhttp;
+      try {
+        xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+      } catch (e) {
+        try {
+          xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (E) {
+          xmlhttp = false;
+        }
+      }
+      if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+        xmlhttp = new XMLHttpRequest();
+      }
+      return xmlhttp;
+    }
+
+    function deleteTask(id) {
+        var req = getXmlHttp();
+        var task = document.getElementById('task'+id);
+
+        req.onreadystatechange = function() {
+            if (req.readyState == 4) {
+                if(req.status == 200) {
+                    task.remove();
+                } else {
+                    task.removeAttribute('style');
+                }
+            }
+        };
+
+        req.open('GET', 'delete/'+id, true);
+        req.send(null);  // отослать запрос
+        task.setAttribute('style', 'opacity:0.5');
+    }
+    </script>
+{% endblock %}
